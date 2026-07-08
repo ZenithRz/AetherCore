@@ -3,6 +3,18 @@ import fs from "fs";
 import path from "path";
 
 const CACHE_FILE = path.join(process.cwd(), ".data", "discord-cache.json");
+const BOT_API = process.env.DISCORD_BOT_API_URL;
+
+async function fetchFromBot() {
+  if (!BOT_API) return null;
+  try {
+    const res = await fetch(`${BOT_API}/api/stats`, { next: { revalidate: 30 } });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
 
 async function fetchFromInvite() {
   const res = await fetch("https://discord.com/api/v10/invites/5t3hUFVcS", {
@@ -43,14 +55,15 @@ function readBotCache() {
 
 export async function GET() {
   try {
+    const botData = await fetchFromBot();
+    if (botData) return NextResponse.json(botData);
+
     const cached = readBotCache();
-    if (cached) {
-      return NextResponse.json(cached);
-    }
+    if (cached) return NextResponse.json(cached);
+
     const inviteData = await fetchFromInvite();
-    if (inviteData) {
-      return NextResponse.json(inviteData);
-    }
+    if (inviteData) return NextResponse.json(inviteData);
+
     return NextResponse.json({ error: "No data available" }, { status: 503 });
   } catch {
     return NextResponse.json({ error: "Internal error" }, { status: 500 });

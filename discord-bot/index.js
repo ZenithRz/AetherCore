@@ -27,6 +27,7 @@ if (!TOKEN) {
 const WELCOME_CHANNEL_ID = process.env.WELCOME_CHANNEL_ID || null;
 const STATS_CATEGORY_ID = process.env.STATS_CATEGORY_ID || null;
 const ANNOUNCE_CHANNEL_ID = process.env.ANNOUNCE_CHANNEL_ID || null;
+const BOT_HTTP_PORT = parseInt(process.env.BOT_HTTP_PORT || "3001", 10);
 
 const client = new Client({
   intents: [
@@ -34,6 +35,7 @@ const client = new Client({
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildPresences,
   ],
 });
 
@@ -41,6 +43,7 @@ const { handleInteraction } = require("./events/interactionCreate");
 const { handleGuildMemberAdd } = require("./events/guildMemberAdd");
 const { startStatsUpdater } = require("./utils/statsChannel");
 const { startStatsWriter } = require("./utils/statsWriter");
+const { startServer, updateCache } = require("./server");
 
 client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
@@ -48,12 +51,22 @@ client.once("ready", () => {
     activities: [{ name: "AETHRECORE | /help", type: ActivityType.Playing }],
     status: "dnd",
   });
+
   startStatsUpdater(client, { categoryId: STATS_CATEGORY_ID });
   startStatsWriter(client);
+  startServer(BOT_HTTP_PORT);
+
+  updateCache(client);
+  setInterval(() => updateCache(client), 60_000);
 });
 
 client.on("guildMemberAdd", (member) => {
   handleGuildMemberAdd(member, { channelId: WELCOME_CHANNEL_ID });
+  updateCache(client);
+});
+
+client.on("guildMemberRemove", () => {
+  updateCache(client);
 });
 
 client.on("interactionCreate", (interaction) => {
