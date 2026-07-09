@@ -13,16 +13,6 @@ type TeamMember = {
   status: string;
 };
 
-const ROLE_COLORS: Record<string, string> = {
-  "AC 〢 Owner": "#d8ff00",
-  "AC 〢 Co-Owner": "#900057",
-  "AC 〢Admin": "#6a0dad",
-  "AC 〢Mod": "#2ec4b6",
-  "AC 〢Staff": "#000000",
-  "AC 〢 Developer": "#0024f3",
-  "AC 〢 Tech Support": "#007ba1",
-};
-
 const ROLE_ORDER = [
   "AC 〢 Owner",
   "AC 〢 Co-Owner",
@@ -30,26 +20,23 @@ const ROLE_ORDER = [
   "AC 〢 Developer",
   "AC 〢Mod",
   "AC 〢 Tech Support",
-  "AC 〢Staff",
 ];
 
-function getBadgeColor(roles: { name: string }[]): string {
-  for (const order of ROLE_ORDER) {
-    if (roles.some((r) => r.name === order)) {
-      return ROLE_COLORS[order] || "#B8BFCB";
-    }
-  }
-  const top = roles.find((r) => ROLE_ORDER.includes(r.name));
-  return top ? ROLE_COLORS[top.name] || "#B8BFCB" : "#B8BFCB";
-}
+const ROLE_COLORS: Record<string, string> = {
+  "AC 〢 Owner": "#d8ff00",
+  "AC 〢 Co-Owner": "#900057",
+  "AC 〢Admin": "#6a0dad",
+  "AC 〢 Developer": "#0024f3",
+  "AC 〢Mod": "#2ec4b6",
+  "AC 〢 Tech Support": "#007ba1",
+};
 
-function getRoleName(roles: { name: string }[]): string {
+function getTopRole(roles: { name: string }[]): { name: string; color: string } {
   for (const order of ROLE_ORDER) {
-    if (roles.some((r) => r.name === order)) {
-      return order.replace("AC 〢", "");
-    }
+    const match = roles.find((r) => r.name === order);
+    if (match) return { name: match.name, color: ROLE_COLORS[order] || "#B8BFCB" };
   }
-  return "Staff";
+  return { name: "Team", color: "#B8BFCB" };
 }
 
 const containerVariants = {
@@ -82,6 +69,12 @@ export default function Team() {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
+
+const sorted = [...team].sort((a, b) => {
+    const aIdx = ROLE_ORDER.indexOf(getTopRole(a.roles).name);
+    const bIdx = ROLE_ORDER.indexOf(getTopRole(b.roles).name);
+    return (aIdx === -1 ? 999 : aIdx) - (bIdx === -1 ? 999 : bIdx);
+  });
 
   return (
     <section id="team" className="relative py-24 sm:py-32 overflow-hidden">
@@ -134,9 +127,10 @@ export default function Team() {
             viewport={{ once: true, margin: "-50px" }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8"
           >
-            {team.map((member) => {
-              const color = getBadgeColor(member.roles);
-              const roleName = getRoleName(member.roles);
+            {sorted.map((member) => {
+              const topRole = getTopRole(member.roles);
+              const color = topRole.color;
+              const roleName = topRole.name;
               const isOnline = member.status === "online" || member.status === "idle" || member.status === "dnd";
               return (
                 <motion.div

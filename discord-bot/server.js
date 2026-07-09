@@ -25,7 +25,7 @@ function updateCache(client) {
       m.presence?.status === "dnd"
   ).size;
 
-  const teamKeywords = ["Admin", "Owner", "Mod", "Staff", "Developer", "Co-Owner", "Tech Support", "Support"];
+  const teamKeywords = ["Admin", "Owner", "Mod", "Developer", "Co-Owner", "Tech Support"];
   const members = guild.members.cache.map((m) => ({
     id: m.id,
     username: m.user.username,
