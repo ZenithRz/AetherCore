@@ -56,13 +56,21 @@ function readBotCache() {
 export async function GET() {
   try {
     const botData = await fetchFromBot();
-    if (botData) return NextResponse.json(botData);
+    const inviteData = await fetchFromInvite();
+
+    if (botData) {
+      return NextResponse.json({
+        ...botData,
+        onlineCount: botData.onlineCount > 0 ? botData.onlineCount : (inviteData?.onlineCount ?? 0),
+      });
+    }
+
+    if (inviteData) {
+      return NextResponse.json(inviteData);
+    }
 
     const cached = readBotCache();
     if (cached) return NextResponse.json(cached);
-
-    const inviteData = await fetchFromInvite();
-    if (inviteData) return NextResponse.json(inviteData);
 
     return NextResponse.json({ error: "No data available" }, { status: 503 });
   } catch {
