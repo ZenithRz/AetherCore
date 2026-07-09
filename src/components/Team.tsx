@@ -13,28 +13,19 @@ type TeamMember = {
   status: string;
 };
 
-const ROLE_ORDER = [
-  "AC 〢 Owner",
-  "AC 〢 Co-Owner",
-  "AC 〢Admin",
-  "AC 〢 Tech Support",
-  "AC 〢 Developer",
-  "AC 〢Mod",
+const ROLE_KEYWORDS = [
+  { key: "Owner", color: "#d8ff00" },
+  { key: "Co-Owner", color: "#900057" },
+  { key: "Admin", color: "#6a0dad" },
+  { key: "Tech Support", color: "#007ba1" },
+  { key: "Developer", color: "#0024f3" },
+  { key: "Mod", color: "#2ec4b6" },
 ];
 
-const ROLE_COLORS: Record<string, string> = {
-  "AC 〢 Owner": "#d8ff00",
-  "AC 〢 Co-Owner": "#900057",
-  "AC 〢Admin": "#6a0dad",
-  "AC 〢 Tech Support": "#007ba1",
-  "AC 〢 Developer": "#0024f3",
-  "AC 〢Mod": "#2ec4b6",
-};
-
 function getTopRole(roles: { name: string }[]): { name: string; color: string } {
-  for (const order of ROLE_ORDER) {
-    const match = roles.find((r) => r.name === order);
-    if (match) return { name: match.name, color: ROLE_COLORS[order] || "#B8BFCB" };
+  for (const rDef of ROLE_KEYWORDS) {
+    const match = roles.find((r) => r.name.includes(rDef.key));
+    if (match) return { name: match.name, color: rDef.color };
   }
   return { name: "Team", color: "#B8BFCB" };
 }
@@ -71,8 +62,8 @@ export default function Team() {
   }, []);
 
 const sorted = [...team].sort((a, b) => {
-    const aIdx = ROLE_ORDER.indexOf(getTopRole(a.roles).name);
-    const bIdx = ROLE_ORDER.indexOf(getTopRole(b.roles).name);
+    const aIdx = ROLE_KEYWORDS.findIndex((r) => a.roles.some((role) => role.name.includes(r.key)));
+    const bIdx = ROLE_KEYWORDS.findIndex((r) => b.roles.some((role) => role.name.includes(r.key)));
     return (aIdx === -1 ? 999 : aIdx) - (bIdx === -1 ? 999 : bIdx);
   });
 
