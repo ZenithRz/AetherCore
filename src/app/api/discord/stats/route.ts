@@ -8,7 +8,7 @@ const BOT_API = process.env.DISCORD_BOT_API_URL;
 async function fetchFromBot() {
   if (!BOT_API) return null;
   try {
-    const res = await fetch(`${BOT_API}/api/stats`, { next: { revalidate: 30 } });
+    const res = await fetch(`${BOT_API}/api/stats`, { cache: "no-cache" });
     if (!res.ok) return null;
     return await res.json();
   } catch {
@@ -18,7 +18,7 @@ async function fetchFromBot() {
 
 async function fetchFromInvite() {
   const res = await fetch("https://discord.com/api/v10/invites/5t3hUFVcS", {
-    next: { revalidate: 60 },
+    cache: "no-cache",
   });
   if (!res.ok) return null;
   const data = await res.json();
@@ -62,18 +62,24 @@ export async function GET() {
       return NextResponse.json({
         ...botData,
         onlineCount: botData.onlineCount > 0 ? botData.onlineCount : (inviteData?.onlineCount ?? 0),
+      }, {
+        headers: { "Cache-Control": "no-cache, no-store, must-revalidate" },
       });
     }
 
     if (inviteData) {
-      return NextResponse.json(inviteData);
+      return NextResponse.json(inviteData, {
+        headers: { "Cache-Control": "no-cache, no-store, must-revalidate" },
+      });
     }
 
     const cached = readBotCache();
-    if (cached) return NextResponse.json(cached);
+    if (cached) return NextResponse.json(cached, {
+      headers: { "Cache-Control": "no-cache, no-store, must-revalidate" },
+    });
 
-    return NextResponse.json({ error: "No data available" }, { status: 503 });
+    return NextResponse.json({ error: "No data available" }, { status: 503, headers: { "Cache-Control": "no-cache, no-store, must-revalidate" } });
   } catch {
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+    return NextResponse.json({ error: "Internal error" }, { status: 500, headers: { "Cache-Control": "no-cache, no-store, must-revalidate" } });
   }
 }

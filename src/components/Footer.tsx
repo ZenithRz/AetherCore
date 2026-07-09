@@ -42,14 +42,19 @@ export default function Footer() {
   } | null>(null);
 
   useEffect(() => {
-    fetch("/api/discord/stats")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.memberCount !== undefined) {
-          setDiscordStats(data);
-        }
-      })
-      .catch(() => {});
+    const fetchStats = () => {
+      fetch("/api/discord/stats")
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.memberCount !== undefined) {
+            setDiscordStats(data);
+          }
+        })
+        .catch(() => {});
+    };
+    fetchStats();
+    const interval = setInterval(fetchStats, 1000);
+    return () => clearInterval(interval);
   }, []);
 
   const [memberHover, setMemberHover] = useState<number | null>(null);
