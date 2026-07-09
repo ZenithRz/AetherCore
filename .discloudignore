@@ -1,0 +1,8 @@
+node_modules/
+.next/
+.git/
+.data/
+*.local
+.DS_Store
+.gitignore
+*.md

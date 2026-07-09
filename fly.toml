@@ -1,0 +1,20 @@
+app = "aethrecore-bot"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  BOT_HTTP_PORT = "3001"
+
+[[services]]
+  port = 3001
+  protocol = "tcp"
+  internal_port = 3001
+
+  [[services.ports]]
+    port = 3001
+    handlers = ["http"]
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 10
+    type = "connections"

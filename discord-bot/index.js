@@ -42,7 +42,7 @@ const { startStatsUpdater } = require("./utils/statsChannel");
 const { startStatsWriter } = require("./utils/statsWriter");
 const { startServer, updateCache } = require("./server");
 
-client.once("ready", () => {
+client.once("ready", async () => {
   console.log(`Logged in as ${client.user.tag}`);
   client.user.setPresence({
     activities: [{ name: "AETHRECORE | /help", type: ActivityType.Playing }],
@@ -52,6 +52,11 @@ client.once("ready", () => {
   startStatsUpdater(client, { categoryId: STATS_CATEGORY_ID });
   startStatsWriter(client);
   startServer(BOT_HTTP_PORT);
+
+  const guild = client.guilds.cache.first();
+  if (guild) {
+    try { await guild.members.fetch(); } catch (e) { console.error("Failed to fetch members:", e.message); }
+  }
 
   updateCache(client);
   setInterval(() => updateCache(client), 60_000);

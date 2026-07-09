@@ -1,2 +1,10 @@
 [phases.setup]
-nixPkgs = ["libatomic"]
+
+[phases.install]
+cmds = ["npm ci --omit=dev"]
+
+[phases.build]
+cmds = []
+
+[start]
+cmd = "node discord-bot/index.js"
