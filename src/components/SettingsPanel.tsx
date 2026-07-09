@@ -2,20 +2,15 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Settings, Volume2, VolumeX, Sun, Moon, Globe, Disc3, LogOut, User } from "lucide-react";
+import { Settings, Volume2, VolumeX, Sun, Moon, Globe, Disc3, LogOut, User, CalendarPlus, Gamepad2, Megaphone } from "lucide-react";
 import { useSoundCtx } from "@/components/SoundProvider";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { useLanguage } from "@/contexts/LanguageProvider";
+import { useDiscordAuth } from "@/contexts/DiscordAuthProvider";
+import { getPermissions } from "@/lib/permissions";
 import type { Lang } from "@/translations";
 
-type Tab = "sound" | "theme" | "language" | "discord";
-
-const tabs: { id: Tab; icon: typeof Settings; label: Record<string, string> }[] = [
-  { id: "sound", icon: Volume2, label: { en: "Sound", ar: "الصوت" } },
-  { id: "theme", icon: Sun, label: { en: "Theme", ar: "المظهر" } },
-  { id: "language", icon: Globe, label: { en: "Language", ar: "اللغة" } },
-  { id: "discord", icon: Disc3, label: { en: "Discord", ar: "ديسكورد" } },
-];
+type Tab = "sound" | "theme" | "language" | "discord" | "events" | "games" | "announce";
 
 export default function SettingsPanel() {
   const [open, setOpen] = useState(false);
@@ -25,32 +20,25 @@ export default function SettingsPanel() {
   const sfx = useSoundCtx();
   const { theme, toggleTheme } = useTheme();
   const { lang, setLang, t } = useLanguage();
+  const { user, loading, login, logout, hasRole } = useDiscordAuth();
   const sliderRef = useRef<HTMLInputElement>(null);
 
-  const [discordUser, setDiscordUser] = useState<{ id: string; username: string; avatar: string } | null>(null);
+  const perms = getPermissions(hasRole);
 
-  useEffect(() => {
-    const stored = localStorage.getItem("discord_user");
-    if (stored) {
-      try { setDiscordUser(JSON.parse(stored)); } catch {}
-    }
-  }, []);
+  const baseTabs: { id: Tab; icon: typeof Settings; label: Record<string, string> }[] = [
+    { id: "sound", icon: Volume2, label: { en: "Sound", ar: "الصوت" } },
+    { id: "theme", icon: Sun, label: { en: "Theme", ar: "المظهر" } },
+    { id: "language", icon: Globe, label: { en: "Language", ar: "اللغة" } },
+    { id: "discord", icon: Disc3, label: { en: "Discord", ar: "ديسكورد" } },
+  ];
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("authenticated") === "true") {
-      const user = {
-        id: params.get("discord_id") || "",
-        username: params.get("username") || "",
-        avatar: params.get("avatar") || "",
-      };
-      setDiscordUser(user);
-      localStorage.setItem("discord_user", JSON.stringify(user));
-      const url = new URL(window.location.href);
-      url.search = "";
-      window.history.replaceState({}, "", url.toString());
-    }
-  }, []);
+  const adminTabs: { id: Tab; icon: typeof Settings; label: Record<string, string>; show: boolean }[] = [
+    { id: "events", icon: CalendarPlus, label: { en: "Events", ar: "الإيفنتات" }, show: perms.canManageEvents },
+    { id: "games", icon: Gamepad2, label: { en: "Games", ar: "الألعاب" }, show: perms.canManageGames },
+    { id: "announce", icon: Megaphone, label: { en: "Announce", ar: "الإعلانات" }, show: perms.canManageAnnouncements },
+  ];
+
+  const visibleTabs = [...baseTabs, ...adminTabs.filter((t) => t.show)];
 
   useEffect(() => {
     setMuted(sfx.isMuted());
@@ -67,15 +55,6 @@ export default function SettingsPanel() {
     sfx.toggleMute();
     setMuted((p) => !p);
   }, [sfx]);
-
-  const handleUnlink = useCallback(() => {
-    setDiscordUser(null);
-    localStorage.removeItem("discord_user");
-  }, []);
-
-  const handleLogin = useCallback(() => {
-    window.location.href = "/api/auth/discord";
-  }, []);
 
   return (
     <>
@@ -108,20 +87,27 @@ export default function SettingsPanel() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
-              className="fixed bottom-24 right-6 z-50 w-72 rounded-xl bg-[var(--surface)]/90 backdrop-blur-xl border border-[var(--border)]/40 shadow-2xl p-5"
+              className="fixed bottom-24 right-6 z-50 w-80 rounded-xl bg-[var(--surface)]/90 backdrop-blur-xl border border-[var(--border)]/40 shadow-2xl p-5"
             >
-              <h3 className="text-[var(--text-primary)] font-orbitron text-sm font-semibold tracking-wider mb-4 uppercase">
-                {t("settings.title")}
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-[var(--text-primary)] font-orbitron text-sm font-semibold tracking-wider uppercase">
+                  {t("settings.title")}
+                </h3>
+                {user && (
+                  <span className="text-[10px] text-accent-muted font-medium px-2 py-0.5 rounded-full border border-accent-muted/30">
+                    {user.globalName}
+                  </span>
+                )}
+              </div>
 
-              <div className="flex gap-1 mb-4 bg-[var(--surface-alt)] rounded-lg p-1">
-                {tabs.map((tab) => {
+              <div className="flex flex-wrap gap-1 mb-4 bg-[var(--surface-alt)] rounded-lg p-1">
+                {visibleTabs.map((tab) => {
                   const Icon = tab.icon;
                   return (
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md text-xs font-medium transition-all duration-200 ${
+                      className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md text-xs font-medium transition-all duration-200 ${
                         activeTab === tab.id
                           ? "bg-accent-platinum/10 text-accent-platinum"
                           : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
@@ -144,7 +130,6 @@ export default function SettingsPanel() {
                     >
                       {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                     </button>
-
                     <div className="flex-1 flex items-center gap-2">
                       <span className="text-xs text-[var(--text-muted)] w-8 text-right">0%</span>
                       <input
@@ -160,7 +145,6 @@ export default function SettingsPanel() {
                       <span className="text-xs text-[var(--text-muted)] w-8">100%</span>
                     </div>
                   </div>
-
                   <div className="flex items-center justify-between text-xs text-[var(--text-muted)]">
                     <span>{t("settings.volume")}</span>
                     <span className="text-accent-platinum font-medium">{Math.round(volume * 100)}%</span>
@@ -169,22 +153,20 @@ export default function SettingsPanel() {
               )}
 
               {activeTab === "theme" && (
-                <div>
-                  <button
-                    onClick={toggleTheme}
-                    className="w-full flex items-center justify-between py-3 px-4 rounded-lg bg-[var(--surface-alt)] hover:bg-[var(--border)]/40 transition-all duration-200"
-                  >
-                    <div className="flex items-center gap-3">
-                      {theme === "dark" ? <Moon className="w-4 h-4 text-accent-platinum" /> : <Sun className="w-4 h-4 text-amber-400" />}
-                      <span className="text-sm text-[var(--text-primary)]">
-                        {theme === "dark" ? t("settings.dark") : t("settings.light")}
-                      </span>
-                    </div>
-                    <div className="w-10 h-5 rounded-full bg-[var(--border)] relative transition-colors">
-                      <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-[var(--text-primary)] shadow-md transition-all duration-300 ${theme === "light" ? "left-5" : "left-0.5"}`} />
-                    </div>
-                  </button>
-                </div>
+                <button
+                  onClick={toggleTheme}
+                  className="w-full flex items-center justify-between py-3 px-4 rounded-lg bg-[var(--surface-alt)] hover:bg-[var(--border)]/40 transition-all duration-200"
+                >
+                  <div className="flex items-center gap-3">
+                    {theme === "dark" ? <Moon className="w-4 h-4 text-accent-platinum" /> : <Sun className="w-4 h-4 text-amber-400" />}
+                    <span className="text-sm text-[var(--text-primary)]">
+                      {theme === "dark" ? t("settings.dark") : t("settings.light")}
+                    </span>
+                  </div>
+                  <div className="w-10 h-5 rounded-full bg-[var(--border)] relative transition-colors">
+                    <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-[var(--text-primary)] shadow-md transition-all duration-300 ${theme === "light" ? "left-5" : "left-0.5"}`} />
+                  </div>
+                </button>
               )}
 
               {activeTab === "language" && (
@@ -210,25 +192,30 @@ export default function SettingsPanel() {
 
               {activeTab === "discord" && (
                 <div>
-                  {discordUser ? (
+                  {loading ? (
+                    <div className="text-center py-6 text-[var(--text-muted)] text-sm">Loading...</div>
+                  ) : user ? (
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 py-3 px-4 rounded-lg bg-[var(--surface-alt)]">
                         <img
                           src={
-                            discordUser.avatar
-                              ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`
-                              : `https://cdn.discordapp.com/embed/avatars/${Number(discordUser.id) % 5}.png`
+                            user.avatar
+                              ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+                              : `https://cdn.discordapp.com/embed/avatars/${Number(user.id) % 5}.png`
                           }
-                          alt={discordUser.username}
+                          alt={user.username}
                           className="w-9 h-9 rounded-full"
                         />
-                        <div>
-                          <p className="text-sm text-[var(--text-primary)] font-medium">{discordUser.username}</p>
-                          <p className="text-xs text-[var(--text-muted)]">{t("settings.discord")}</p>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-[var(--text-primary)] font-medium truncate">{user.globalName}</p>
+                          <p className="text-xs text-[var(--text-muted)] truncate">@{user.username}</p>
                         </div>
+                        {perms.canManageAll && (
+                          <span className="text-[10px] text-amber-400 font-semibold px-2 py-0.5 rounded-full bg-amber-400/10 border border-amber-400/30">Admin</span>
+                        )}
                       </div>
                       <button
-                        onClick={handleUnlink}
+                        onClick={logout}
                         className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-medium text-red-400 bg-[var(--surface-alt)] hover:bg-red-400/10 transition-all duration-200"
                       >
                         <LogOut className="w-3.5 h-3.5" />
@@ -245,7 +232,7 @@ export default function SettingsPanel() {
                         </div>
                       </div>
                       <button
-                        onClick={handleLogin}
+                        onClick={login}
                         className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-medium text-white bg-[#5865F2] hover:bg-[#4752C4] transition-all duration-200"
                       >
                         <Disc3 className="w-3.5 h-3.5" />
@@ -253,6 +240,87 @@ export default function SettingsPanel() {
                       </button>
                     </div>
                   )}
+                </div>
+              )}
+
+              {activeTab === "events" && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <CalendarPlus className="w-4 h-4 text-accent-platinum" />
+                    <span className="text-sm font-orbitron text-[var(--text-primary)] font-semibold">Create Event</span>
+                  </div>
+                  <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
+                    <input
+                      type="text"
+                      placeholder={lang === "ar" ? "اسم الإيفنت" : "Event name"}
+                      className="w-full px-3 py-2 rounded-lg bg-[var(--surface-alt)] border border-[var(--border)] text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none focus:border-accent-platinum/40 transition-colors"
+                    />
+                    <textarea
+                      placeholder={lang === "ar" ? "وصف الإيفنت" : "Event description"}
+                      rows={3}
+                      className="w-full px-3 py-2 rounded-lg bg-[var(--surface-alt)] border border-[var(--border)] text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none resize-none focus:border-accent-platinum/40 transition-colors"
+                    />
+                    <button
+                      type="submit"
+                      className="w-full py-2 rounded-lg text-xs font-semibold text-dark-900 bg-accent-platinum hover:bg-accent-platinum/80 transition-colors"
+                    >
+                      {lang === "ar" ? "نشر الإيفنت" : "Publish Event"}
+                    </button>
+                  </form>
+                </div>
+              )}
+
+              {activeTab === "games" && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Gamepad2 className="w-4 h-4 text-accent-platinum" />
+                    <span className="text-sm font-orbitron text-[var(--text-primary)] font-semibold">{lang === "ar" ? "إضافة لعبة" : "Add Game"}</span>
+                  </div>
+                  <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
+                    <input
+                      type="text"
+                      placeholder={lang === "ar" ? "اسم اللعبة" : "Game name"}
+                      className="w-full px-3 py-2 rounded-lg bg-[var(--surface-alt)] border border-[var(--border)] text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none focus:border-accent-platinum/40 transition-colors"
+                    />
+                    <input
+                      type="text"
+                      placeholder={lang === "ar" ? "رابط الصورة" : "Image URL"}
+                      className="w-full px-3 py-2 rounded-lg bg-[var(--surface-alt)] border border-[var(--border)] text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none focus:border-accent-platinum/40 transition-colors"
+                    />
+                    <button
+                      type="submit"
+                      className="w-full py-2 rounded-lg text-xs font-semibold text-dark-900 bg-accent-platinum hover:bg-accent-platinum/80 transition-colors"
+                    >
+                      {lang === "ar" ? "إضافة اللعبة" : "Add Game"}
+                    </button>
+                  </form>
+                </div>
+              )}
+
+              {activeTab === "announce" && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Megaphone className="w-4 h-4 text-accent-platinum" />
+                    <span className="text-sm font-orbitron text-[var(--text-primary)] font-semibold">{lang === "ar" ? "إعلان جديد" : "New Announcement"}</span>
+                  </div>
+                  <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
+                    <input
+                      type="text"
+                      placeholder={lang === "ar" ? "عنوان الإعلان" : "Announcement title"}
+                      className="w-full px-3 py-2 rounded-lg bg-[var(--surface-alt)] border border-[var(--border)] text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none focus:border-accent-platinum/40 transition-colors"
+                    />
+                    <textarea
+                      placeholder={lang === "ar" ? "محتوى الإعلان" : "Announcement content"}
+                      rows={3}
+                      className="w-full px-3 py-2 rounded-lg bg-[var(--surface-alt)] border border-[var(--border)] text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none resize-none focus:border-accent-platinum/40 transition-colors"
+                    />
+                    <button
+                      type="submit"
+                      className="w-full py-2 rounded-lg text-xs font-semibold text-dark-900 bg-accent-platinum hover:bg-accent-platinum/80 transition-colors"
+                    >
+                      {lang === "ar" ? "نشر الإعلان" : "Send Announcement"}
+                    </button>
+                  </form>
                 </div>
               )}
             </motion.div>

@@ -52,6 +52,7 @@ export async function GET(req: NextRequest) {
     const user = await userRes.json();
 
     let isMember = false;
+    let roles: string[] = [];
     if (BOT_TOKEN) {
       try {
         const memberRes = await fetch(
@@ -61,6 +62,10 @@ export async function GET(req: NextRequest) {
           }
         );
         isMember = memberRes.ok;
+        if (memberRes.ok) {
+          const memberData = await memberRes.json();
+          roles = memberData.roles || [];
+        }
       } catch {
         isMember = false;
       }
@@ -70,7 +75,9 @@ export async function GET(req: NextRequest) {
       discord_id: user.id,
       username: user.username,
       avatar: user.avatar || "",
+      global_name: user.global_name || user.username,
       is_member: String(isMember),
+      roles: roles.join(","),
       authenticated: "true",
     });
 

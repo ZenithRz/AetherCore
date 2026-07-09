@@ -4,6 +4,7 @@ import "./globals.css";
 import { SoundProvider } from "@/components/SoundProvider";
 import { ThemeProvider } from "@/contexts/ThemeProvider";
 import { LanguageProvider } from "@/contexts/LanguageProvider";
+import { DiscordAuthProvider } from "@/contexts/DiscordAuthProvider";
 import SoundToggle from "@/components/SoundToggle";
 import SettingsPanel from "@/components/SettingsPanel";
 
@@ -67,11 +68,13 @@ export default function RootLayout({
       <body className="min-h-screen bg-[var(--background)] text-[var(--foreground)] overflow-x-hidden">
         <ThemeProvider>
           <LanguageProvider>
-            <SoundProvider>
-              {children}
-              <SoundToggle />
-              <SettingsPanel />
-            </SoundProvider>
+            <DiscordAuthProvider>
+              <SoundProvider>
+                {children}
+                <SoundToggle />
+                <SettingsPanel />
+              </SoundProvider>
+            </DiscordAuthProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>
