@@ -22,12 +22,12 @@ const ROLE_KEYWORDS = [
   { key: "Mod", color: "#2ec4b6" },
 ];
 
-function getTopRole(roles: { name: string }[]): { name: string; color: string } {
+function getTopRole(roles: { name: string }[]): { key: string; name: string; color: string } {
   for (const rDef of ROLE_KEYWORDS) {
     const match = roles.find((r) => r.name.includes(rDef.key));
-    if (match) return { name: match.name, color: rDef.color };
+    if (match) return { key: rDef.key, name: match.name, color: rDef.color };
   }
-  return { name: "Team", color: "#B8BFCB" };
+  return { key: "Team", name: "Team", color: "#B8BFCB" };
 }
 
 const containerVariants = {
@@ -122,28 +122,39 @@ const sorted = [...team].sort((a, b) => {
               const topRole = getTopRole(member.roles);
               const color = topRole.color;
               const roleName = topRole.name;
+              const isTechSupport = topRole.key === "Tech Support";
               const isOnline = member.status === "online" || member.status === "idle" || member.status === "dnd";
               return (
                 <motion.div
                   key={member.id}
                   variants={memberVariants}
                   data-sfx-hover
-                  whileHover={{ y: -8 }}
+                  whileHover={{ y: isTechSupport ? -12 : -8 }}
                   className="group relative"
                 >
-                  <div className="absolute -inset-0.5 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-500 blur-lg bg-gradient-to-br from-dark-500/50 to-transparent" />
+                  <div className={`absolute -inset-0.5 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-500 blur-lg ${isTechSupport ? "bg-gradient-to-br from-accent-platinum/30 via-accent-navy/30 to-transparent" : "bg-gradient-to-br from-dark-500/50 to-transparent"}`} />
 
-                  <div className="relative bg-dark-700/80 border border-dark-500/50 rounded-2xl p-6 sm:p-8 text-center h-full flex flex-col items-center gap-4 transition-all duration-300 group-hover:border-dark-400/70 overflow-hidden">
+                  <div className={`relative bg-dark-700/80 border rounded-2xl p-6 sm:p-8 text-center h-full flex flex-col items-center gap-4 transition-all duration-300 overflow-hidden ${isTechSupport ? "border-accent-platinum/60 shadow-[0_0_30px_rgba(184,191,203,0.15)] group-hover:border-accent-platinum group-hover:shadow-[0_0_50px_rgba(184,191,203,0.25)]" : "border-dark-500/50 group-hover:border-dark-400/70"}`}>
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/3 to-transparent -translate-x-full group-hover:animate-shimmer-sweep" />
                     </div>
+
+                    {isTechSupport && (
+                      <motion.div
+                        className="absolute top-3 right-3 z-20"
+                        animate={{ scale: [1, 1.15, 1], rotate: [0, 5, -5, 0] }}
+                        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                      >
+                        <span className="text-xs font-orbitron tracking-widest text-accent-platinum/60">★</span>
+                      </motion.div>
+                    )}
 
                     <div className="relative">
                       <motion.div
                         className="w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center border-2 overflow-hidden"
                         style={{
-                          borderColor: `${color}60`,
-                          boxShadow: `0 0 20px ${color}20`,
+                          borderColor: isTechSupport ? "#B8BFCB" : `${color}60`,
+                          boxShadow: isTechSupport ? "0 0 30px rgba(184,191,203,0.3)" : `0 0 20px ${color}20`,
                         }}
                         whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
                         transition={{ duration: 0.5 }}
@@ -151,7 +162,9 @@ const sorted = [...team].sort((a, b) => {
                         <motion.div
                           className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100"
                           style={{
-                            background: `conic-gradient(from 0deg, transparent, ${color}40, transparent, ${color}20, transparent)`,
+                            background: isTechSupport
+                              ? "conic-gradient(from 0deg, transparent, #B8BFCB60, transparent, #B8BFCB30, transparent)"
+                              : `conic-gradient(from 0deg, transparent, ${color}40, transparent, ${color}20, transparent)`,
                           }}
                           animate={{ rotate: [0, 360] }}
                           transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
@@ -179,11 +192,13 @@ const sorted = [...team].sort((a, b) => {
                       <motion.span
                         className="inline-block px-3 py-1 rounded-full text-xs font-semibold tracking-wide"
                         style={{
-                          background: `linear-gradient(135deg, ${color}20, ${color}05)`,
-                          color: color,
-                          border: `1px solid ${color}30`,
+                          background: isTechSupport
+                            ? "linear-gradient(135deg, rgba(184,191,203,0.2), rgba(184,191,203,0.05))"
+                            : `linear-gradient(135deg, ${color}20, ${color}05)`,
+                          color: isTechSupport ? "#B8BFCB" : color,
+                          border: isTechSupport ? "1px solid rgba(184,191,203,0.3)" : `1px solid ${color}30`,
                         }}
-                        whileHover={{ scale: 1.05, boxShadow: `0 0 15px ${color}30` }}
+                        whileHover={{ scale: 1.05, boxShadow: isTechSupport ? "0 0 15px rgba(184,191,203,0.3)" : `0 0 15px ${color}30` }}
                       >
                         {roleName}
                       </motion.span>
