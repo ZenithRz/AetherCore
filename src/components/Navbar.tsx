@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageProvider";
+import DiscordNavButton from "@/components/DiscordNavButton";
 
 export default function Navbar() {
   const { t, lang } = useLanguage();
@@ -92,6 +93,10 @@ export default function Navbar() {
             ))}
           </div>
 
+          <div className="hidden md:flex items-center ml-4">
+            <DiscordNavButton />
+          </div>
+
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             data-sfx-click
@@ -130,6 +135,9 @@ export default function Navbar() {
                   {link.label}
                 </motion.a>
               ))}
+              <div className="pt-2">
+                <DiscordNavButton />
+              </div>
             </div>
           </motion.div>
         )}

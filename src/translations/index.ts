@@ -7,6 +7,9 @@ export const translations = {
       team: "Team",
       news: "News",
       contact: "Contact",
+      signIn: "Sign In",
+      disconnect: "Disconnect",
+      signedInAs: "Signed in as",
     },
     hero: {
       subtitle: "Premium Gaming Community",
@@ -84,6 +87,9 @@ export const translations = {
       team: "الفريق",
       news: "الأخبار",
       contact: "اتصل بنا",
+      signIn: "تسجيل الدخول",
+      disconnect: "قطع الاتصال",
+      signedInAs: "مسجل كـ",
     },
     hero: {
       subtitle: "مجتمع ألعاب متميز",
