@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 
 const CACHE_FILE = path.join(process.cwd(), ".data", "discord-cache.json");
-const BOT_API = process.env.DISCORD_BOT_API_URL;
+const BOT_API = process.env.DISCORD_BOT_API_URL || "https://aethrecore-bot-production.up.railway.app";
 
 async function fetchFromBot() {
   if (!BOT_API) return null;

@@ -6,14 +6,20 @@ import { Disc3, LogOut, User } from "lucide-react";
 import { useDiscordAuth } from "@/contexts/DiscordAuthProvider";
 import { useLanguage } from "@/contexts/LanguageProvider";
 import { getPermissions } from "@/lib/permissions";
+import DiscordLoginModal from "@/components/DiscordLoginModal";
 
 export default function DiscordNavButton() {
   const { user, loading, login, logout, hasRole } = useDiscordAuth();
   const { t, lang } = useLanguage();
   const [open, setOpen] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   const perms = getPermissions(hasRole);
+
+  const handleLoginClick = () => {
+    setShowLoginModal(true);
+  };
 
   useEffect(() => {
     const handle = (e: MouseEvent) => {
@@ -86,7 +92,7 @@ export default function DiscordNavButton() {
         </>
       ) : (
         <button
-          onClick={login}
+          onClick={handleLoginClick}
           disabled={loading}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#5865F2]/10 hover:bg-[#5865F2]/20 border border-[#5865F2]/20 hover:border-[#5865F2]/40 transition-all duration-300 text-xs font-medium text-[#5865F2] disabled:opacity-50"
         >
@@ -98,6 +104,12 @@ export default function DiscordNavButton() {
       {user && (
         <MobileDiscordBar user={user} logout={logout} t={t} />
       )}
+
+      <DiscordLoginModal
+        open={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onLogin={login}
+      />
     </div>
   );
 }

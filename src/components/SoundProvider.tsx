@@ -16,11 +16,11 @@ type SoundContextType = {
 const SoundContext = createContext<SoundContextType | null>(null);
 
 const VOLUMES: Record<SoundType, number> = {
-  hover: 0.04,
-  click: 0.06,
-  inkSpread: 0.08,
-  uiSlide: 0.05,
-  notification: 0.07,
+  hover: 0.10,
+  click: 0.14,
+  inkSpread: 0.18,
+  uiSlide: 0.12,
+  notification: 0.16,
 };
 
 const RATES: Record<SoundType, number> = {

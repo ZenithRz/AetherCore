@@ -14,16 +14,10 @@ const socialLinks = [
     svg: "/icons/discord.svg",
   },
   {
-    name: "Twitter/X",
-    href: "https://x.com",
-    color: "#000000",
-    svg: "/icons/x.svg",
-  },
-  {
-    name: "YouTube",
-    href: "https://youtube.com",
-    color: "#FF0000",
-    svg: "/icons/youtube.svg",
+    name: "Instagram",
+    href: "https://www.instagram.com/aethercore_official/",
+    color: "#E4405F",
+    svg: "/icons/instagram.svg",
   },
 ];
 

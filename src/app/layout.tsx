@@ -5,7 +5,6 @@ import { SoundProvider } from "@/components/SoundProvider";
 import { ThemeProvider } from "@/contexts/ThemeProvider";
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { DiscordAuthProvider } from "@/contexts/DiscordAuthProvider";
-import SoundToggle from "@/components/SoundToggle";
 import SettingsPanel from "@/components/SettingsPanel";
 
 const geistSans = Geist({
@@ -31,7 +30,7 @@ const tajawal = Tajawal({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://aethrecore.vercel.app"),
+  metadataBase: new URL("https://aethercoreserver.vercel.app"),
   title: "AETHRECORE | Gaming Community",
   description: "العب. تنافس. تواصل. — WHERE LEGENDS COLLIDE: PLAY. COMPETE. CONNECT.",
   icons: {
@@ -71,7 +70,6 @@ export default function RootLayout({
             <DiscordAuthProvider>
               <SoundProvider>
                 {children}
-                <SoundToggle />
                 <SettingsPanel />
               </SoundProvider>
             </DiscordAuthProvider>
