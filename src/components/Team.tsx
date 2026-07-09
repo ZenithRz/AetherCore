@@ -17,18 +17,18 @@ const ROLE_ORDER = [
   "AC 〢 Owner",
   "AC 〢 Co-Owner",
   "AC 〢Admin",
+  "AC 〢 Tech Support",
   "AC 〢 Developer",
   "AC 〢Mod",
-  "AC 〢 Tech Support",
 ];
 
 const ROLE_COLORS: Record<string, string> = {
   "AC 〢 Owner": "#d8ff00",
   "AC 〢 Co-Owner": "#900057",
   "AC 〢Admin": "#6a0dad",
+  "AC 〢 Tech Support": "#007ba1",
   "AC 〢 Developer": "#0024f3",
   "AC 〢Mod": "#2ec4b6",
-  "AC 〢 Tech Support": "#007ba1",
 };
 
 function getTopRole(roles: { name: string }[]): { name: string; color: string } {
