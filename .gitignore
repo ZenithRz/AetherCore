@@ -36,6 +36,12 @@ yarn-error.log*
 # vercel
 .vercel
 
+# cloudflare / opennext
+.open-next/
+.dev.vars
+worker-configuration.d.ts
+wrangler.json
+
 # discord bot cache
 .data/
 

@@ -1,5 +1,5 @@
 {
-  "name": "gaming-community",
+  "name": "aethercore",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,10 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "cf:build": "opennextjs-cloudflare build",
+    "cf:deploy": "opennextjs-cloudflare deploy",
+    "cf:preview": "opennextjs-cloudflare preview",
     "bot:deploy": "node discord-bot/deploy.js",
     "bot:start": "node discord-bot/index.js"
   },
   "dependencies": {
+    "@opennextjs/cloudflare": "^1.20.1",
     "discord.js": "^14.26.4",
     "dotenv": "^17.4.2",
     "framer-motion": "^12.42.2",
