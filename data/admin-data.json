@@ -1,0 +1,17 @@
+{
+  "events": [],
+  "games": [],
+  "admins": {
+    "mainAdmin": "AC-KTVH-0X4960",
+    "subAdmins": []
+  },
+  "registeredUsers": {
+    "AC-KTVH-0X4960": {
+      "discordId": "1498193636591144960",
+      "username": "zenithpyte",
+      "globalName": "𝖎𝖅𝖊𝖓𝖎𝖙𝖍",
+      "avatar": "15dfab96014c865660a950379d9300b9",
+      "registeredAt": "2026-07-11T22:28:13.083Z"
+    }
+  }
+}

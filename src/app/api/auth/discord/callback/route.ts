@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { generateSerialNumber } from "@/lib/serial";
+import { registerUser } from "@/lib/data-store";
 
 const CLIENT_ID = "1524379193817956442";
 const GUILD_ID = "1453794735704637473";
@@ -55,21 +57,47 @@ export async function GET(req: NextRequest) {
     let roles: string[] = [];
     if (BOT_TOKEN) {
       try {
-        const memberRes = await fetch(
-          `https://discord.com/api/v10/guilds/${GUILD_ID}/members/${user.id}`,
-          {
-            headers: { Authorization: `Bot ${BOT_TOKEN}` },
-          }
-        );
+        const [memberRes, guildRolesRes] = await Promise.all([
+          fetch(
+            `https://discord.com/api/v10/guilds/${GUILD_ID}/members/${user.id}`,
+            { headers: { Authorization: `Bot ${BOT_TOKEN}` } }
+          ),
+          fetch(
+            `https://discord.com/api/v10/guilds/${GUILD_ID}/roles`,
+            { headers: { Authorization: `Bot ${BOT_TOKEN}` } }
+          ),
+        ]);
         isMember = memberRes.ok;
-        if (memberRes.ok) {
+        if (memberRes.ok && guildRolesRes.ok) {
+          const [memberData, guildRoles] = await Promise.all([
+            memberRes.json(),
+            guildRolesRes.json(),
+          ]);
+          const roleIdToName = new Map<string, string>();
+          for (const r of guildRoles) {
+            roleIdToName.set(r.id, r.name);
+          }
+          roles = (memberData.roles || [])
+            .map((id: string) => roleIdToName.get(id) || id)
+            .filter((name: string) => name.startsWith("AC 〢"));
+        } else if (memberRes.ok) {
           const memberData = await memberRes.json();
-          roles = memberData.roles || [];
+          roles = (memberData.roles || []).slice();
         }
       } catch {
         isMember = false;
       }
     }
+
+    const serial = generateSerialNumber(user.id);
+
+    registerUser(serial, {
+      discordId: user.id,
+      username: user.username,
+      globalName: user.global_name || user.username,
+      avatar: user.avatar || "",
+      registeredAt: new Date().toISOString(),
+    });
 
     const params = new URLSearchParams({
       discord_id: user.id,
@@ -78,6 +106,7 @@ export async function GET(req: NextRequest) {
       global_name: user.global_name || user.username,
       is_member: String(isMember),
       roles: roles.join(","),
+      serial,
       authenticated: "true",
     });
 

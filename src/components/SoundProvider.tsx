@@ -38,7 +38,7 @@ const SFX_VOLUME_KEY = "sfx_volume";
 export function SoundProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const mutedRef = useRef(true);
-  const volumeRef = useRef(0.5);
+  const volumeRef = useRef(1.0);
   const lastHoveredRef = useRef<Element | null>(null);
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hoverCountRef = useRef(0);

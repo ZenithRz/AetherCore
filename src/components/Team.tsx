@@ -71,7 +71,7 @@ const sorted = [...team].sort((a, b) => {
 
   return (
     <section id="team" className="relative py-24 sm:py-32 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-dark-900 via-dark-800/40 to-dark-900" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[var(--background)] via-[var(--surface-alt)]/40 to-[var(--background)]" />
 
       <motion.div
         className="absolute top-10 left-10 w-40 h-40 rounded-full bg-accent-platinum/3 blur-3xl"
@@ -97,18 +97,18 @@ const sorted = [...team].sort((a, b) => {
               {t("team.title")}
             </span>
           </h2>
-          <p className="text-text-secondary text-lg max-w-2xl mx-auto">
+          <p className="text-[var(--text-secondary)] text-lg max-w-2xl mx-auto">
             {t("team.desc")}
           </p>
         </motion.div>
 
         {loading ? (
-          <div className="text-center text-text-muted py-20">
+          <div className="text-center text-[var(--text-muted)] py-20">
             <div className="inline-block w-8 h-8 border-2 border-accent-platinum/40 border-t-accent-platinum rounded-full animate-spin mb-4" />
             <p>{t("team.loading")}</p>
           </div>
         ) : team.length === 0 ? (
-          <div className="text-center text-text-muted py-20">
+          <div className="text-center text-[var(--text-muted)] py-20">
             <Shield className="w-12 h-12 mx-auto mb-4 opacity-40" />
             <p>{t("team.noData")}</p>
           </div>
@@ -134,10 +134,19 @@ const sorted = [...team].sort((a, b) => {
                   whileHover={{ y: isTechSupport ? -12 : -8 }}
                   className="group relative"
                 >
-                  <div className={`absolute -inset-0.5 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-500 blur-lg ${isTechSupport ? "bg-gradient-to-br from-accent-platinum/30 via-accent-navy/30 to-transparent" : "bg-gradient-to-br from-dark-500/50 to-transparent"}`} />
+                  <div className={`absolute -inset-0.5 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-500 blur-lg ${isTechSupport ? "bg-gradient-to-br from-accent-platinum/30 via-accent-navy/30 to-transparent" : "bg-gradient-to-br from-[var(--border)]/50 to-transparent"}`} />
 
-                  <div className={`relative bg-dark-700/80 border rounded-2xl p-6 sm:p-8 text-center h-full flex flex-col items-center gap-4 transition-all duration-300 overflow-hidden ${isTechSupport ? "border-accent-platinum/60 shadow-[0_0_30px_rgba(184,191,203,0.15)] group-hover:border-accent-platinum group-hover:shadow-[0_0_50px_rgba(184,191,203,0.25)]" : "border-dark-500/50 group-hover:border-dark-400/70"}`}>
+                  <motion.div
+                    className={`relative bg-[var(--surface)]/80 backdrop-blur-md border rounded-2xl p-6 sm:p-8 text-center h-full flex flex-col items-center gap-4 overflow-hidden ${isTechSupport ? "border-accent-platinum/60 shadow-[0_0_30px_rgba(184,191,203,0.15)] group-hover:border-accent-platinum group-hover:shadow-[0_0_50px_rgba(184,191,203,0.25)]" : "border-[var(--border)]/50 group-hover:border-[var(--border)]/80"}`}
+                    whileHover={{ y: isTechSupport ? -12 : -8, scale: 1.01 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  >
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                      <motion.div
+                        className="absolute w-full h-px bg-gradient-to-r from-transparent via-accent-platinum/8 to-transparent"
+                        animate={{ top: ["-10%", "110%"] }}
+                        transition={{ duration: 4, repeat: Infinity, ease: "linear", delay: member.id.charCodeAt(0) * 0.05 }}
+                      />
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/3 to-transparent -translate-x-full group-hover:animate-shimmer-sweep" />
                     </div>
 
@@ -188,7 +197,7 @@ const sorted = [...team].sort((a, b) => {
                     </div>
 
                     <div>
-                      <h3 className="font-orbitron text-lg font-bold text-text-primary mb-1">
+                      <h3 className="font-orbitron text-lg font-bold text-[var(--text-primary)] mb-1">
                         {member.displayName}
                       </h3>
                       <motion.span
@@ -205,7 +214,7 @@ const sorted = [...team].sort((a, b) => {
                         {roleName}
                       </motion.span>
                     </div>
-                  </div>
+                  </motion.div>
                 </motion.div>
               );
             })}

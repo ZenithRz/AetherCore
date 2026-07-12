@@ -6,6 +6,10 @@ import { ThemeProvider } from "@/contexts/ThemeProvider";
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { DiscordAuthProvider } from "@/contexts/DiscordAuthProvider";
 import SettingsPanel from "@/components/SettingsPanel";
+import FloatingLoginButton from "@/components/FloatingLoginButton";
+import LoginModalWrapper from "@/components/LoginModalWrapper";
+import LogoutOverlay from "@/components/LogoutOverlay";
+import PageTransition from "@/components/PageTransition";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -69,8 +73,14 @@ export default function RootLayout({
           <LanguageProvider>
             <DiscordAuthProvider>
               <SoundProvider>
-                {children}
-                <SettingsPanel />
+                <LoginModalWrapper>
+                  <PageTransition>
+                    {children}
+                  </PageTransition>
+                  <SettingsPanel />
+                  <FloatingLoginButton />
+                </LoginModalWrapper>
+                <LogoutOverlay />
               </SoundProvider>
             </DiscordAuthProvider>
           </LanguageProvider>

@@ -37,7 +37,7 @@ export default function Navbar() {
       transition={{ duration: 0.6, ease: "easeOut" as const }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-dark-900/90 backdrop-blur-xl border-b border-dark-500/30 shadow-lg shadow-dark-900/50"
+          ? "bg-[var(--background)]/90 backdrop-blur-xl border-b border-[var(--border)]/30 shadow-lg shadow-[var(--background)]/50"
           : "bg-transparent"
       }`}
     >
@@ -85,7 +85,7 @@ export default function Navbar() {
                 href={link.href}
                 data-sfx-hover
                 whileHover={{ scale: 1.05 }}
-                className="group relative text-sm text-text-secondary hover:text-text-primary transition-colors duration-300"
+                className="group relative text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors duration-300"
               >
                 {link.label}
                 <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-accent-platinum opacity-0 group-hover:opacity-100 transition-all duration-300 scale-0 group-hover:scale-100" />
@@ -100,7 +100,7 @@ export default function Navbar() {
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             data-sfx-click
-            className="md:hidden relative z-50 p-2 text-text-secondary hover:text-text-primary transition-colors"
+            className="md:hidden relative z-50 p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
             aria-label="Toggle menu"
           >
             {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -115,7 +115,7 @@ export default function Navbar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden bg-dark-800/95 backdrop-blur-xl border-t border-dark-500/30"
+            className="md:hidden bg-[var(--surface)]/95 backdrop-blur-xl border-t border-[var(--border)]/30"
           >
             <div className="px-4 py-6 space-y-4">
               {navLinks.map((link, i) => (
@@ -129,7 +129,7 @@ export default function Navbar() {
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25, delay: i * 0.06, ease: "easeOut" }}
                   whileHover={{ x: 8 }}
-                  className="flex items-center gap-3 text-lg text-text-secondary hover:text-text-primary transition-colors duration-300"
+                  className="flex items-center gap-3 text-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors duration-300"
                 >
                   <span className="w-1 h-1 rounded-full bg-accent-platinum/50 group-hover:bg-accent-platinum transition-colors" />
                   {link.label}

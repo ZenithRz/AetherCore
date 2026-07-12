@@ -38,6 +38,9 @@ yarn-error.log*
 
 # cloudflare / opennext
 .open-next/
+.open-next-out/
+.wrangler/
+dev-server.log
 .dev.vars
 worker-configuration.d.ts
 wrangler.json

@@ -16,5 +16,16 @@
 	],
 	"images": {
 		"binding": "IMAGES"
+	},
+	"observability": {
+		"logs": {
+			"enabled": false,
+			"invocation_logs": true
+		}
+	},
+	"vars": {
+		"NEXT_PUBLIC_BASE_URL": "https://aethercore.djamelayachi200.workers.dev",
+		"DISCORD_GUILD_ID": "1453794735704637473",
+		"DISCORD_BOT_API_URL": "https://aethrecore-bot-production.up.railway.app"
 	}
 }

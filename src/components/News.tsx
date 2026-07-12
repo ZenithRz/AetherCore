@@ -8,7 +8,7 @@ const placeholderArticles = [1, 2, 3];
 export default function News() {
   return (
     <section id="news" className="relative py-24 sm:py-32 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-dark-900 via-dark-800/30 to-dark-900" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[var(--background)] via-[var(--surface-alt)]/30 to-[var(--background)]" />
 
       <motion.div
         className="absolute top-20 right-20 w-36 h-36 rounded-full bg-accent-platinum/3 blur-3xl"
@@ -34,7 +34,7 @@ export default function News() {
               NEWS & UPDATES
             </span>
           </h2>
-          <p className="text-text-secondary text-lg max-w-2xl mx-auto">
+          <p className="text-[var(--text-secondary)] text-lg max-w-2xl mx-auto">
             Server announcements, patch notes, and community highlights
           </p>
         </motion.div>
@@ -50,9 +50,17 @@ export default function News() {
               data-sfx-hover
               className="group relative"
             >
-              <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-dark-500/20 via-transparent to-dark-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm" />
+              <motion.div
+                className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-accent-platinum/10 via-transparent to-accent-platinum/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm"
+                animate={{ rotate: [0, 1, -1, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              />
 
-              <div className="relative bg-dark-700/60 border border-dark-500/40 rounded-2xl p-8 text-center h-full flex flex-col items-center justify-center gap-5 min-h-[280px] transition-all duration-300 group-hover:border-dark-400/60 overflow-hidden">
+              <motion.div
+                className="relative bg-[var(--surface)]/70 backdrop-blur-md border border-[var(--border)]/40 rounded-2xl p-8 text-center h-full flex flex-col items-center justify-center gap-5 min-h-[280px] transition-all duration-300 overflow-hidden"
+                whileHover={{ y: -6, scale: 1.01, borderColor: "rgba(184,191,203,0.35)" }}
+                transition={{ type: "spring", stiffness: 400, damping: 35 }}
+              >
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                   <motion.div
                     className="absolute w-full h-px bg-gradient-to-r from-transparent via-accent-platinum/10 to-transparent"
@@ -62,7 +70,7 @@ export default function News() {
                 </div>
 
                 <motion.div
-                  className="w-16 h-16 rounded-full bg-dark-600/80 border border-dark-500/50 flex items-center justify-center"
+                  className="w-16 h-16 rounded-full bg-[var(--surface-alt)]/80 border border-[var(--border)]/50 flex items-center justify-center"
                   whileHover={{ scale: 1.1, rotate: [0, -8, 8, 0] }}
                   transition={{ duration: 0.5 }}
                 >
@@ -80,7 +88,7 @@ export default function News() {
                   )}
                 </motion.div>
 
-                <h3 className="font-orbitron text-lg font-bold text-text-primary">
+                <h3 className="font-orbitron text-lg font-bold text-[var(--text-primary)]">
                   {i === 0 ? (
                     <span className="flex items-center gap-2 justify-center">
                       <motion.span
@@ -95,7 +103,7 @@ export default function News() {
                   )}
                 </h3>
 
-                <p className="text-text-muted text-sm leading-relaxed max-w-xs">
+                <p className="text-[var(--text-muted)] text-sm leading-relaxed max-w-xs">
                   {i === 0
                     ? "Static fills the airwaves. We are experiencing technical difficulties with our news feed."
                     : "The news feed is currently quiet. Check back soon for server updates and patch notes."}
@@ -119,7 +127,7 @@ export default function News() {
                     />
                   ))}
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           ))}
         </div>

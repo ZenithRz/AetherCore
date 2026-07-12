@@ -22,7 +22,7 @@ const socialLinks = [
 ];
 
 const inputClass =
-  "w-full px-4 py-3 rounded-xl bg-dark-700/80 border border-dark-500/50 text-text-primary placeholder-text-muted outline-none transition-all duration-300 focus:border-accent-platinum/60 focus:shadow-[0_0_15px_rgba(184,191,203,0.15)] focus:bg-dark-700";
+  "w-full px-4 py-3 rounded-xl bg-[var(--surface)]/80 border border-[var(--border)]/50 text-[var(--text-primary)] placeholder-text-muted outline-none transition-all duration-300 focus:border-accent-platinum/60 focus:shadow-[0_0_15px_rgba(184,191,203,0.15)] focus:bg-[var(--surface)] backdrop-blur-sm";
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -57,7 +57,7 @@ export default function Footer() {
 
   return (
     <footer id="contact" className="relative py-24 sm:py-32 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-dark-900 via-dark-800/40 to-dark-900" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[var(--background)] via-[var(--surface-alt)]/40 to-[var(--background)]" />
 
       <motion.div
         className="absolute top-1/4 right-1/4 w-52 h-52 rounded-full bg-accent-platinum/3 blur-3xl"
@@ -92,7 +92,7 @@ export default function Footer() {
               {t("footer.title")}
             </span>
           </h2>
-          <p className="text-text-secondary text-lg max-w-2xl mx-auto">
+          <p className="text-[var(--text-secondary)] text-lg max-w-2xl mx-auto">
             {t("footer.desc")}
           </p>
         </motion.div>
@@ -105,7 +105,7 @@ export default function Footer() {
             transition={{ duration: 0.8 }}
             className="lg:col-span-2"
           >
-            <h3 className="font-orbitron text-xl font-bold text-text-primary mb-6 flex items-center gap-2">
+            <h3 className="font-orbitron text-xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-2">
               <Mail className="w-5 h-5 text-accent-platinum" />
               {t("footer.send")}
             </h3>
@@ -166,7 +166,7 @@ export default function Footer() {
             className="space-y-10"
           >
             <div>
-              <h3 className="font-orbitron text-xl font-bold text-text-primary mb-6 flex items-center gap-2">
+              <h3 className="font-orbitron text-xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-accent-navy" />
                 {t("footer.connect")}
               </h3>
@@ -179,10 +179,11 @@ export default function Footer() {
                       target="_blank"
                       rel="noopener noreferrer"
                       data-sfx-hover
-                      className="group flex items-center gap-3 p-3 rounded-xl bg-dark-700/40 border border-dark-500/30 transition-all duration-300 relative overflow-hidden"
+                      className="group flex items-center gap-3 p-3 rounded-xl bg-[var(--surface)]/40 backdrop-blur-sm border border-[var(--border)]/30 transition-all duration-300 relative overflow-hidden"
                       onMouseEnter={() => setMemberHover(i)}
                       onMouseLeave={() => setMemberHover(null)}
                       whileHover={{ x: 6, borderColor: "rgba(184,191,203,0.6)" }}
+                      transition={{ type: "spring", stiffness: 400, damping: 35 }}
                     >
                       <div
                         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -202,7 +203,7 @@ export default function Footer() {
                           style={{ filter: `brightness(0) invert(1)` }}
                         />
                       </motion.div>
-                      <span className="text-text-secondary group-hover:text-text-primary transition-colors duration-300 relative z-10">
+                      <span className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors duration-300 relative z-10">
                         {social.name}
                       </span>
                     </motion.a>
@@ -211,15 +212,16 @@ export default function Footer() {
             </div>
 
             <div>
-              <h3 className="font-orbitron text-xl font-bold text-text-primary mb-6 flex items-center gap-2">
+              <h3 className="font-orbitron text-xl font-bold text-[var(--text-primary)] mb-6 flex items-center gap-2">
                 <Wifi className="w-5 h-5 text-accent-mauve" />
                 {t("footer.stats")}
               </h3>
 
               <motion.div
                 data-sfx-hover
-                className="bg-dark-700/40 border border-dark-500/30 rounded-xl p-6 relative overflow-hidden"
-                whileHover={{ borderColor: "rgba(184,191,203,0.4)" }}
+                className="bg-[var(--surface)]/40 backdrop-blur-sm border border-[var(--border)]/30 rounded-xl p-6 relative overflow-hidden"
+                whileHover={{ y: -4, scale: 1.01, borderColor: "rgba(184,191,203,0.4)" }}
+                transition={{ type: "spring", stiffness: 400, damping: 35 }}
               >
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                   <motion.div
@@ -239,7 +241,7 @@ export default function Footer() {
                     >
                       <Users className="w-6 h-6 text-accent-platinum" />
                     </motion.div>
-                    <p className="text-text-muted text-xs mb-1">{t("footer.members")}</p>
+                    <p className="text-[var(--text-muted)] text-xs mb-1">{t("footer.members")}</p>
                     <p className="font-orbitron text-2xl font-bold bg-gradient-to-r from-accent-platinum to-accent-navy bg-clip-text text-transparent">
                       {discordStats?.memberCount ?? "—"}
                     </p>
@@ -254,7 +256,7 @@ export default function Footer() {
                     >
                       <Wifi className="w-6 h-6 text-accent-muted" />
                     </motion.div>
-                    <p className="text-text-muted text-xs mb-1">{t("footer.online")}</p>
+                    <p className="text-[var(--text-muted)] text-xs mb-1">{t("footer.online")}</p>
                     <p className="font-orbitron text-2xl font-bold bg-gradient-to-r from-accent-muted to-accent-navy bg-clip-text text-transparent">
                       {discordStats?.onlineCount ?? "—"}
                     </p>
@@ -270,7 +272,7 @@ export default function Footer() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="mt-16 pt-8 border-t border-dark-500/30 flex flex-col sm:flex-row items-center justify-between gap-4"
+          className="mt-16 pt-8 border-t border-[var(--border)]/30 flex flex-col sm:flex-row items-center justify-between gap-4"
         >
           <div className="flex items-center gap-2">
             <motion.div
@@ -283,7 +285,7 @@ export default function Footer() {
               AETHRECORE
             </span>
           </div>
-          <p className="text-text-muted text-sm">
+          <p className="text-[var(--text-muted)] text-sm">
             &copy; {new Date().getFullYear()} {t("footer.copyright")}
           </p>
         </motion.div>
